@@ -8,7 +8,7 @@ int		count(int value, int *strct, int cash)
 {
 	int		amount;
 
-	amount = cash / *strct;
+	amount = cash / value;
 	if (amount > *strct)
 		amount = *strct;
 	cash = cash - value * amount;
@@ -16,10 +16,22 @@ int		count(int value, int *strct, int cash)
 	return (cash);
 }
 
+void	change_values(t_money *from, t_money *to)
+{
+	to->five_t = from->five_t;
+	to->two_t = from->two_t;
+	to->one_t = from->one_t;
+	to->five_h = from->five_h;
+	to->two_h = from->two_h;
+	to->one_h = from->one_h;
+	to->half_h = from->half_h;
+}
+
 void	ft_money_out(char **arr, t_money *money)
 {
 	int		cash;
 	int		tmp_cash;
+	t_money	*tmp_money;
 
 	if (arr[1])
 		cash = atoi(arr[1]);
@@ -36,6 +48,8 @@ void	ft_money_out(char **arr, t_money *money)
 		return ;
 	}
 	tmp_cash = cash;
+	tmp_money = malloc(sizeof(t_money));
+	change_values(money, tmp_money);
 	if (cash >= 5000 && money->five_t > 0)
 		cash = count(5000, &money->five_t, cash);
 	if (cash >= 2000 && money->two_t > 0)
@@ -52,11 +66,13 @@ void	ft_money_out(char **arr, t_money *money)
 		cash = count(50, &money->half_h, cash);
 	if (cash != 0)
 	{
+		change_values(tmp_money, money);
 		printf("Not enough specific denomination notes\n");
 		return ;
 	}
 	else
 		money->sum-=tmp_cash;
+	free (tmp_money);
 }
 
 void	ft_money_in(char **arr, t_money *money)
